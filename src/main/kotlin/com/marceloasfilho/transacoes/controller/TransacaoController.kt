@@ -23,7 +23,7 @@ class TransacaoController(private val transacaoService: TransacaoService) {
         return ResponseEntity(HttpStatus.OK)
     }
 
-    @GetMapping
+    @GetMapping("/estatistica")
     fun obterEstatisticasTransacoes(): ResponseEntity<EstatisticaDTO> {
         val response = this.transacaoService.obtemEstatisticasTransacoes()
         return ResponseEntity(response, HttpStatus.OK)
