@@ -6,4 +6,5 @@ import com.marceloasfilho.transacoes.model.Transacao
 interface TransacaoRepository {
     fun salvar(transacao: Transacao): Transacao
     fun deletarTodasTransacoes()
+    fun listarTransacoesUltimoMinuto(): List<Transacao>
 }
