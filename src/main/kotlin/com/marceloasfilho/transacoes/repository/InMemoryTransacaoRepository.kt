@@ -18,9 +18,9 @@ class InMemoryTransacaoRepository : TransacaoRepository {
         this.transacoes.clear()
     }
 
-    override fun listarTransacoesUltimoMinuto(): List<Transacao> {
+    override fun listarUltimasTransacoesIntervalo(intervalo: Long): List<Transacao> {
         val dataHoraFim: OffsetDateTime = OffsetDateTime.now()
-        val dataHoraInicio = dataHoraFim.minusMinutes(1)
+        val dataHoraInicio = dataHoraFim.minusMinutes(intervalo)
 
         return this.transacoes.filter { !it.dataHora.isBefore(dataHoraInicio) && !it.dataHora.isAfter(dataHoraFim) }
     }
