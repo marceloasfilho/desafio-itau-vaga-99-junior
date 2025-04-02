@@ -10,8 +10,8 @@ class InMemoryTransacaoRepository : TransacaoRepository {
     private val transacoes = mutableListOf<Transacao>()
 
     override fun salvar(transacao: Transacao): Transacao {
-        transacoes.add(transacao)
-        return transacoes.last()
+        this.transacoes.add(transacao)
+        return this.transacoes.last()
     }
 
     override fun deletarTodasTransacoes() {

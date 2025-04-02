@@ -1,5 +1,6 @@
 package com.marceloasfilho.transacoes.service
 
+import com.marceloasfilho.transacoes.exception.InvalidIntervalStatisticException
 import com.marceloasfilho.transacoes.mapper.toEntity
 import com.marceloasfilho.transacoes.model.Transacao
 import com.marceloasfilho.transacoes.model.dto.EstatisticaDTO
@@ -32,7 +33,9 @@ class TransacaoService(
     fun obtemEstatisticasTransacoes(): EstatisticaDTO {
 
         val intervalo: Long = this.environment.getProperty("transacao.intervalo", Long::class.java, 1L)
-        require(intervalo >= 0) { "O valor de transacao.intervalo não pode ser negativo. Valor atual: $intervalo" }
+        if (intervalo < 0) {
+            throw InvalidIntervalStatisticException("O valor da propriedade {transacao.intervalo} não pode ser negativo. Valor atual: $intervalo")
+        }
 
         var resultado: EstatisticaDTO? = null
 

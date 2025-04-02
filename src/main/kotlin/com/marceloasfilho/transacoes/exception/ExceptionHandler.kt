@@ -8,8 +8,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import java.time.Instant
 
 @ControllerAdvice
 class ExceptionHandlers : ResponseEntityExceptionHandler() {
@@ -43,7 +45,19 @@ class ExceptionHandlers : ResponseEntityExceptionHandler() {
         val response = ErrorMessage(
             message = ex.localizedMessage,
             status = status.value(),
-            error = "Malformed JSON request"
+            error = "Malformed JSON request",
+            timestamp = Instant.now()
+        )
+        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(InvalidIntervalStatisticException::class)
+    fun handleInvalidIntervalException(ex: InvalidIntervalStatisticException): ResponseEntity<ErrorMessage> {
+        val response = ErrorMessage(
+            message = ex.message.toString(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "Bad Request",
+            timestamp = Instant.now()
         )
         return ResponseEntity(response, HttpStatus.BAD_REQUEST)
     }
