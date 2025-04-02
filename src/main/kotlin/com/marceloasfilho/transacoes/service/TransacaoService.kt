@@ -7,6 +7,7 @@ import com.marceloasfilho.transacoes.model.dto.TransacaoDTO
 import com.marceloasfilho.transacoes.repository.TransacaoRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
+import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}
 
@@ -25,19 +26,26 @@ class TransacaoService(private val transacaoRepository: TransacaoRepository) {
     }
 
     fun obtemEstatisticasTransacoes(): EstatisticaDTO {
-        val ultimasTransacoes = this.transacaoRepository.listarTransacoesUltimoMinuto()
+        var resultado: EstatisticaDTO? = null
 
-        logger.info { "Últimas transações ocorridas no último minuto: $ultimasTransacoes" }
+        val tempoExecucao = measureTimeMillis {
+            val ultimasTransacoes = this.transacaoRepository.listarTransacoesUltimoMinuto()
+            logger.info { "Últimas transações ocorridas no último minuto: $ultimasTransacoes" }
 
-        return when (ultimasTransacoes.size) {
-            0 -> EstatisticaDTO()
-            else -> EstatisticaDTO(
-                count = ultimasTransacoes.count(),
-                sum = ultimasTransacoes.sumOf { it.valor },
-                avg = (ultimasTransacoes.sumOf { it.valor }) / ultimasTransacoes.size,
-                min = ultimasTransacoes.minOf { it.valor },
-                max = ultimasTransacoes.maxOf { it.valor }
-            )
+            resultado = if (ultimasTransacoes.isEmpty()) {
+                EstatisticaDTO()
+            } else {
+                EstatisticaDTO(
+                    count = ultimasTransacoes.count(),
+                    sum = ultimasTransacoes.sumOf { it.valor },
+                    avg = ultimasTransacoes.sumOf { it.valor } / ultimasTransacoes.size,
+                    min = ultimasTransacoes.minOf { it.valor },
+                    max = ultimasTransacoes.maxOf { it.valor }
+                )
+            }
         }
+
+        logger.info { "Tempo de obtenção das estatísticas: $tempoExecucao ms" }
+        return resultado!!
     }
 }
