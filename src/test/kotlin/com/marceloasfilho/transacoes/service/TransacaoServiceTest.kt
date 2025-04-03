@@ -43,9 +43,11 @@ class TransacaoServiceTest {
         whenever(this.environment.getProperty("transacao.intervalo", Long::class.java, 1L)).thenReturn(-1L)
 
         // Ação/Verificação
-        assertThrows<InvalidIntervalStatisticException> {
+        val assertThrows = assertThrows<InvalidIntervalStatisticException> {
             this.service.obtemEstatisticasTransacoes()
         }
+
+        assertEquals("O valor da propriedade {transacao.intervalo} não pode ser negativo. Valor atual: -1", assertThrows.message)
     }
 
     @Test
